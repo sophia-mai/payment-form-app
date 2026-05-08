@@ -3,10 +3,11 @@ submitBtn.addEventListener("click", handleFormSubmit);
 
 function handleFormSubmit(event) {
   event.preventDefault();
+
   const month = document.getElementById("month").value;
   const year = document.getElementById("year").value;
   if (new Date() > new Date(year, month - 1)) {
-    window.alert("Your card is expired");
+    window.alert("Your card is expired!");
     return;
   }
 
@@ -17,7 +18,7 @@ function handleFormSubmit(event) {
   }
 
   const cnumber = document.getElementById("cnumber").value;
-  if (!isValid(cnumber)) {
+  if (!/^[0-9]{13,16}$/.test(cnumber) || !isValid(cnumber)) {
     window.alert("Invalid card number!");
     return;
   }
@@ -26,5 +27,23 @@ function handleFormSubmit(event) {
 }
 
 function isValid(cnumber) {
-  return true;
+  let arr = cnumber
+    .split("")
+    .reverse()
+    .map((element) => parseInt(element));
+
+  const sum = arr.reduce(reducer, 0);
+
+  function reducer(accumulator, currentValue, currentIndex) {
+    currentIndex += 1;
+    if (currentIndex % 2 === 0) {
+      currentValue *= 2;
+      if (currentValue > 9) {
+        currentValue -= 9;
+      }
+    }
+    return accumulator + currentValue;
+  }
+
+  return sum % 10 === 0;
 }
